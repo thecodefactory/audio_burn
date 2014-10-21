@@ -1,0 +1,196 @@
+AC_INIT(audio_burn/audio_burn.c)
+
+AC_PREREQ(2.50)
+
+AB_MAJOR=0
+AB_MINOR=0
+AB_SUB=9
+AB_PRE=""
+
+AM_INIT_AUTOMAKE(audio_burn, $AB_MAJOR.$AB_MINOR.$AB_SUB$AB_PRE)
+
+AC_DEFINE_UNQUOTED(AB_VERSION,"$AB_MAJOR.$AB_MINOR.$AB_SUB")
+
+AC_PROG_LIBTOOL
+AC_STDC_HEADERS
+AC_PROG_MAKE_SET
+AC_PROG_INSTALL
+AC_PROG_CXX
+AC_LANG_CPLUSPLUS
+
+dnl
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+
+AC_CHECK_SIZEOF(unsigned short, 2)
+AC_CHECK_SIZEOF(unsigned int, 4)
+AC_CHECK_SIZEOF(unsigned long, 4)
+
+dnl
+dnl Check for required run-time libraries
+dnl
+
+dnl *** Ogg Vorbis
+have_oggvorbis=no
+VORBIS_LIBS="-lvorbisfile -lvorbis"
+AC_ARG_ENABLE(vorbis,
+[  --disable-vorbis        Disable Ogg Vorbis support [default=enabled]],,
+		enable_vorbis="yes")
+
+if test "x$enable_vorbis" = xyes; then
+	  AC_MSG_CHECKING(if vorbis is sufficient for our usage)
+	  CFLAGS_save=$CFLAGS
+	  LIBS_save=$LIBS
+	  CFLAGS="$CFLAGS $VORBIS_CFLAGS $OGG_CFLAGS"
+	  LIBS="$LIBS $VORBIS_LIBS $OGG_LIBS"
+	  AC_TRY_LINK(
+		[#include <vorbis/codec.h>
+                 #include <vorbis/vorbisfile.h>],
+		[OggVorbis_File vf;
+		 FILE *stream;
+                 ov_open(stream,&vf,NULL,0);],
+		[AC_MSG_RESULT([yes])
+                have_oggvorbis=yes],
+		[AC_MSG_RESULT([no])
+		 have_oggvorbis=no])
+else
+	AC_MSG_RESULT([*** Ogg Vorbis supported disabled per user request ***])
+	have_oggvorbis=no
+fi
+if test "x$have_oggvorbis" = xyes; then
+   AC_DEFINE(HAVE_OGGVORBIS,"$HAVE_OGGVORBIS")
+fi
+
+dnl
+dnl Check for required run-time programs
+dnl
+AC_PATH_PROG([FILE_PROG], [file], [no],
+             [$PATH:/usr/libexec:/usr/sbin:/usr/bin:bin])
+AC_PATH_PROG([WHICH_PROG], [which], [no],
+             [$PATH:/usr/libexec:/usr/sbin:/usr/bin:bin])
+AC_PATH_PROG([MPG321_PROG], [mpg321], [no],
+             [$PATH:/usr/libexec:/usr/sbin:/usr/bin:bin])
+AC_PATH_PROG([OGGDEC_PROG], [oggdec], [no],
+             [$PATH:/usr/libexec:/usr/sbin:/usr/bin:bin])
+AC_PATH_PROG([SOX_PROG], [sox], [no],
+             [$PATH:/usr/libexec:/usr/sbin:/usr/bin:bin])
+AC_PATH_PROG([NORMALIZE_PROG], [normalize], [no],
+             [$PATH:/usr/libexec:/usr/sbin:/usr/bin:bin])
+AC_PATH_PROG([CDRECORD_PROG], [cdrecord], [no],
+             [$PATH:/usr/libexec:/usr/sbin:/usr/bin:bin])
+
+if test $FILE_PROG = no; then
+   AC_MSG_ERROR("configure cannot continue unless the program \"file\" is properly installed on the system")
+   AC_MSG_ERROR(Terminating)
+fi
+if test $WHICH_PROG = no; then
+   AC_MSG_ERROR("configure cannot continue unless the program \"which\" is properly installed on the system")
+   AC_MSG_ERROR(Terminating)
+fi
+
+AC_ARG_ENABLE(mpg321,
+        [  --disable-mpg321        Do not use mpg321],
+        [ac_cv_enable_mpg321=$enableval], [ac_cv_enable_mpg321=yes])
+
+if test "$ac_cv_enable_mpg321" = yes; then
+if test $MPG321_PROG = no; then
+   AC_MSG_RESULT(ERROR: configure cannot continue unless the program)
+   AC_MSG_RESULT(ERROR: \"mpg321\" is properly installed on your system.)
+   AC_MSG_RESULT(ERROR: Please try downloading this package from your software)
+   AC_MSG_RESULT(ERROR: vendor -- or download and install the source from)
+   AC_MSG_RESULT(http://mpg321.sourceforge.net/)
+   AC_MSG_RESULT(Alternatively use the --disable-mpg321 switch to configure)
+   AC_MSG_ERROR(Terminating)
+fi
+fi
+
+AC_ARG_ENABLE(oggdec,
+        [  --disable-oggdec        Do not use oggdec],
+        [ac_cv_enable_oggdec=$enableval], [ac_cv_enable_oggdec=yes])
+
+if test "$ac_cv_enable_oggdec" = yes; then
+if test $OGGDEC_PROG = no; then
+   AC_MSG_RESULT(ERROR: configure cannot continue unless the program)
+   AC_MSG_RESULT(ERROR: \"oggdec\" is properly installed on your system.)
+   AC_MSG_RESULT(ERROR: Please try downloading this package from your software)
+   AC_MSG_RESULT(ERROR: vendor -- or download and install the source from)
+   AC_MSG_RESULT(http://www.vorbis.com/download_unix.psp)
+   AC_MSG_RESULT(Alternatively use the --disable-oggdec switch to configure)
+   AC_MSG_ERROR(Terminating)
+fi
+fi
+
+AC_ARG_ENABLE(sox,
+        [  --disable-sox           Do not use oggdec],
+        [ac_cv_enable_sox=$enableval], [ac_cv_enable_sox=yes])
+
+if test "$ac_cv_enable_sox" = yes; then
+if test $SOX_PROG = no; then
+   AC_MSG_RESULT(ERROR: configure cannot continue unless the program)
+   AC_MSG_RESULT(ERROR: \"sox\" is properly installed on your system.)
+   AC_MSG_RESULT(ERROR: Please try downloading this package from your software)
+   AC_MSG_RESULT(ERROR: vendor -- or download and install the source from)
+   AC_MSG_RESULT(http://sox.sourceforge.net/)
+   AC_MSG_RESULT(Alternatively use the --disable-sox switch to configure)
+   AC_MSG_ERROR(Terminating)
+fi
+fi
+
+AC_ARG_ENABLE(normalize,
+        [  --disable-normalize     Do not use normalize],
+        [ac_cv_enable_norm=$enableval], [ac_cv_enable_norm=yes])
+
+if test "$ac_cv_enable_norm" = yes; then
+if test $NORMALIZE_PROG = no; then
+   AC_MSG_RESULT(ERROR: configure cannot continue unless the program)
+   AC_MSG_RESULT(ERROR: \"normalize\" is properly installed on your system.)
+   AC_MSG_RESULT(ERROR: Please try downloading this package from your software)
+   AC_MSG_RESULT(ERROR: vendor -- or download and install the source from)
+   AC_MSG_RESULT(http://www.cs.columbia.edu/~cvaill/normalize/)
+   AC_MSG_RESULT(Alternatively use the --disable-normalize switch to configure)
+   AC_MSG_ERROR(Terminating)
+fi
+fi
+
+AC_ARG_ENABLE(cdrecord,
+        [  --disable-cdrecord      Do not use cdrecord],
+        [ac_cv_enable_cdrecord=$enableval], [ac_cv_enable_cdrecord=yes])
+
+if test "$ac_cv_enable_cdrecord" = yes; then
+if test $CDRECORD_PROG = no; then
+   AC_MSG_RESULT(ERROR: configure cannot continue unless the program)
+   AC_MSG_RESULT(ERROR: \"cdrecord\" is properly installed on your system.)
+   AC_MSG_RESULT(ERROR: Please try downloading this package from your software)
+   AC_MSG_RESULT(ERROR: vendor -- or download and install the source from)
+   AC_MSG_RESULT(http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html)
+   AC_MSG_RESULT(Alternatively use the --disable-cdrecord switch to configure)
+   AC_MSG_ERROR(Terminating)
+fi
+fi
+
+AC_DEFINE_UNQUOTED(FILE_PROG,"$FILE_PROG")
+AC_DEFINE_UNQUOTED(WHICH_PROG,"$WHICH_PROG")
+AC_DEFINE_UNQUOTED(MPG321_PROG,"$MPG321_PROG")
+AC_DEFINE_UNQUOTED(OGGDEC_PROG,"$OGGDEC_PROG")
+AC_DEFINE_UNQUOTED(SOX_PROG,"$SOX_PROG")
+AC_DEFINE_UNQUOTED(NORMALIZE_PROG,"$NORMALIZE_PROG")
+AC_DEFINE_UNQUOTED(CDRECORD_PROG,"$CDRECORD_PROG")
+
+dnl
+dnl Common cflags for all platforms
+dnl
+COMMON_CFLAGS="-D_REENTRANT"
+
+CFLAGS="$COMMON_FLAGS $CFLAGS"
+
+AC_SUBST(CFLAGS)
+
+AC_OUTPUT([
+           libaudioburn/Makefile
+           audio_burn/Makefile
+           Makefile
+          ])

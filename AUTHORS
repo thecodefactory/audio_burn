@@ -1,0 +1,73 @@
+==============
+
+  audio_burn
+
+==============
+
+audio_burn is a simple command line audio burning application.
+the goal is to provide all of the functionality needed to
+quickly burn a mixed group of .wav, .mp3, and .ogg files
+with one convenient application.
+
+The functionality is provided by libaudioburn (which is
+distributed with audio_burn).
+
+audio_burn and libaudioburn have been authored and designed by
+Neill Miller (neillm@thecodefactory.org).
+
+This software is Free Software (GPL).
+
+================================
+Individual project contributors:
+
+ Neill Miller
+ Robert T. Brown
+================================
+
+libaudioburn uses some third-party applications to provide
+the functionality that it provides.
+
+Each of the utilities used are Copyright their respective authors.
+NOTE: All utilties and code pieces used are Free Software (GPL/LGPL).
+
+The utilities used are as follows:
+
+oggdec:
+-------
+http://www.vorbis.com/download_unix.psp
+
+
+mpg321:
+-------
+http://mpg321.sourceforge.net/
+
+
+sox:
+----
+http://sox.sourceforge.net/
+http://www.spies.com/Sox/
+
+
+normalize:
+----------
+http://www.cs.columbia.edu/~cvaill/normalize/
+
+
+cdrecord:
+---------
+http://www.fokus.gmd.de/research/cc/glone/employees/joerg.schilling/private/cdrecord.html
+
+
+-------------------------------------------------------------
+Some modified code has been used from the following projects:
+-------------------------------------------------------------
+XMMS - http://www.xmms.org/  (GPL)
+mpglib part of mpg123 - http://www.mpg123.de/ (LGPL)
+
+These bits of code are copyright their respective owners, in addition
+to myself for the modifications.
+
+Thanks to all of the authors and contributors to all of the above
+mentioned utilities and pieces of code.
+
+

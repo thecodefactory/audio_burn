@@ -1,0 +1,102 @@
+
+
+audio_burn 0.0.9
+================
+- explicitly drop privileges in all code paths after running cdrecord
+- add --atapi command line option to support probing IDE cdrom devices
+- add --atapi-dev=DEV command line option to support using a specific IDE
+  cdrom device (where DEV=/dev/hdX)
+- use explicit -tao option by default unless -dao is specified
+- fixed a cdrecord/device probing parse bug that caused some devices to
+  show up with the wrong bus,target,lun and label 
+- fixed a crash bug when reading configuration files that are longer than
+  expected due to not clearing the input buffer between reads
+- fixed a general configuration parse bug
+
+
+audio_burn 0.0.8
+================
+- added support for burning multiple copies of the same cd using the
+  --copies=M or -C M command line options
+- added configuration file support in libaudioburn.  audio_burn will now
+  use the settings in the configuration file, but overwrites settings with
+  command line arguments if there are conflicts.  settings can be written
+  to a config file (${HOME}/.audioburnrc) by using the --saveconfig
+  command line switch
+- ignore all probed scsi devices that are not CD-ROM devices
+- added a gracetime option to shorten the wait time before burning
+- when the new --copies or -C option is used, set the gracetime
+  automatically to 2 seconds (the smallest allowable gracetime)
+- added support for enabling burn-free (buffer-underrun) mode if available
+  using the --burnfree command line option
+- removed TODO file from distribution
+- report cd-devices as CD-ROM devices, rather than SCSI devices
+- properly warn user if config file cannot be read on startup
+
+
+audio_burn 0.0.7
+================
+- added CREDITS file to the distribution
+- sets the default burn speed to be the fastest possible, instead of 1x
+- added support for files with mixed case file extensions (e.g. Mp3)
+- added support for m3u format playlists, in that the files in them are
+  processed if one is specified on the command line
+- added improved error handling and reporting in several places
+
+
+audio_burn 0.0.6
+================
+- added a small delay in between io callbacks to make the output smoother
+  during decoding/normalization stages
+- properly check wav file headers to see if resampling is necessary; now
+  does a direct wav file header read and does not rely on shell tool
+  'file' since some versions did not properly report required information
+- added session at once option (commonly referred to as disk-at-once) due
+  to user request
+
+
+audio_burn 0.0.5
+================
+- Properly check to make sure all specified songs can fit on CD
+  (based on time) before decoding anything (rather than after)
+- Added a --cdlength command line option for specifying longer or
+  shorter target audio disc lengths.  74 minutes is the default.
+- Minor cosmetic changes to output
+
+
+audio_burn 0.0.4
+================
+
+- Crash bug fix when no cdrecorder is present
+- Properly handle non-cd removable media being present and detect it as a
+  non cd recording device (i.e. ignore non cd devices that show up as a
+  scsi device according to cdrecord)
+- Properly detect devices across multiple scsibuses (not multiple devices
+  *per* scsibus, but rather *multiple* scsibuses)
+- Cosmetic changes to program output
+
+
+audio_burn 0.0.3
+================
+
+- Fixed the usage of the -s and -e options (now recognized properly)
+- Now resamples wav files after generating them if they're not valid
+- Fixed a bad pointer error when using the nocleantmp option
+- Fixed broken parsing of multiple scsi devices (Robert Brown)
+- Cosmetic changes to program output
+
+
+audio_burn 0.0.2
+================
+
+- Replaced spaces with underscores when generating temporary files
+- Fixed broken soft linking on valid input wav files by specifying
+  full pathnames
+- Added a "--nocleantmp" option to allow outputted wav files to not
+  be deleted
+
+
+audio_burn 0.0.1
+================
+
+- Initial public release of audio_burn
